@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
 import type { TFIlterArgs } from "../types";
 
 import OrientationSelector from "./OrientationSelector";
@@ -9,18 +9,19 @@ type TProps = {
   setFilterArgs: React.Dispatch<React.SetStateAction<TFIlterArgs>>;
 };
 
-export default function FilterPhotoList({ setFilterArgs }: TProps) {
+export default function FilterPhotoList({
+  setFilterArgs,
+}: TProps): React.ReactElement {
   return (
     <View>
-      <Text>FILTER BY COLOR:</Text>
       <View style={styles.container}>
-        {/* <OrientationSelector
+        <OrientationSelector
           onOrientationChange={(orientation) =>
             setFilterArgs((prevState) => {
               return { ...prevState, orientation, page: 1 };
             })
           }
-        /> */}
+        />
         <ColorSelector
           onColorChange={(color: string) => {
             setFilterArgs((prevState) => {
@@ -39,6 +40,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     display: "flex",
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
   },
 });

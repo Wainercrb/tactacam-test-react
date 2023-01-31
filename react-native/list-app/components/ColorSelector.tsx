@@ -5,18 +5,18 @@ import {
   Modal,
   StyleSheet,
   Button,
+  Text
 } from "react-native";
 import WheelPicker from "react-native-wheel-color-picker";
-
-const DEFAULT_COLOR = "#000000";
+import FilterListDefaultArgs from "../constants/FilterList";
 
 type TProps = {
   onColorChange: (color: string) => void;
 };
 
-const OrientationSelector: React.FC<TProps> = ({ onColorChange }) => {
+export default function OrientationSelector ({ onColorChange }: TProps): JSX.Element  {
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);
+  const [selectedColor, setSelectedColor] = useState(FilterListDefaultArgs.color);
 
   const handleOpenModal = () => {
     setIsVisible(true);
@@ -29,6 +29,7 @@ const OrientationSelector: React.FC<TProps> = ({ onColorChange }) => {
 
   return (
     <View style={styles.container}>
+       <Text style={styles.label}>Color:</Text>
       <TouchableOpacity onPress={handleOpenModal}>
         <View
           style={{ backgroundColor: selectedColor, ...styles.colorPreview }}
@@ -68,7 +69,8 @@ const styles = StyleSheet.create({
     top: 12,
     right: 12,
     width: 120,
+  },
+  label: {
+    marginBottom: 3
   }
 });
-
-export default OrientationSelector;

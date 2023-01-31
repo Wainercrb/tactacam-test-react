@@ -8,23 +8,17 @@ import {
 import { GetColorName } from 'hex-color-to-color-name';
 import { useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import type { TFIlterArgs } from "../types";
 
 import ImagePreview from "../components/ImagePreview";
 import FilterPhotoList from "../components/FilterList";
 import { useGetPhotosQuery } from "../services/unsplash";
+import FilterListDefaultArgs from "../constants/FilterList";
 
-// TODO: Move this data into the contants filter
-const FILTER_INITIAL_STATE: TFIlterArgs = {
-  color: "#d98c40",
-  orientation: "",
-  page: 1
-};
 
 export default function ScreenList() {
   const flatList = useRef<FlatList>(null);
   const navigation = useNavigation();
-  const [filterArgs, setFilterArgs] = useState(FILTER_INITIAL_STATE);
+  const [filterArgs, setFilterArgs] = useState(FilterListDefaultArgs);
   const { data, isFetching, error } = useGetPhotosQuery({
     ...filterArgs,
     color: GetColorName(filterArgs.color)
