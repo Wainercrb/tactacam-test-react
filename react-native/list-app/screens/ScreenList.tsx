@@ -28,10 +28,10 @@ export default function ScreenList() {
     }
   };
 
-  const goToPreviewScreen = () => {
+  const goToPreviewScreen = (photoID: string) => {
     // alert();
     console.log("asdfasdfasfasdfasf");
-    navigation.navigate("Preview");
+    navigation.navigate("Preview", {'photoID': photoID});
   };
 
   return (
@@ -43,7 +43,7 @@ export default function ScreenList() {
             return index.toString();
           }}
           renderItem={({ item, index }) => (
-            <TouchableWithoutFeedback onPress={() => goToPreviewScreen()}>
+            <TouchableWithoutFeedback onPress={() => goToPreviewScreen(item.id)}>
               <View>
                 <ImagePreview uri={item.urls.thumb} idx={index.toString()} />
               </View>
@@ -68,7 +68,6 @@ const styles = StyleSheet.create({
   },
   loading: {
     height: 40,
-    backgroundColor: "red",
     alignItems: "center",
     justifyContent: "center",
   },

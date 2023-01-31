@@ -2,10 +2,10 @@ import { Image } from "react-native";
 
 type TProps = {
   idx: string;
-  uri: string;
+  uri?: string;
 };
 
-export default function ImagePreview({ idx, uri }: TProps) {
+export default function ImagePreview({ idx, uri = 'None' }: TProps) {
   return (
     <Image
       onProgress={() => {console.log('uno dos')}}

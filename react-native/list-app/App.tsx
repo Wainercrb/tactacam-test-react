@@ -6,8 +6,13 @@ import store from "./store";
 import ScreenList from "./screens/ScreenList";
 import ScreenListPreview from "./screens/ScreenListPreview";
 
+export type TRootStackParamList = {
+  List: undefined;
+  Preview: { photoID: string };
+};
+
 export default function App() {
-  const Stack = createNativeStackNavigator();
+  const Stack = createNativeStackNavigator<TRootStackParamList>();
   return (
     <NavigationContainer>
       <ReduxProvider store={store}>
