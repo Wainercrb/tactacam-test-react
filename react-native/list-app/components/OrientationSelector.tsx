@@ -27,7 +27,6 @@ const OrientationSelector: React.FC<TProps> = ({ onOrientationChange }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 60,
     width: 180,
     color: "black",
   },

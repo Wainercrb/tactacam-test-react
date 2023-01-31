@@ -1,9 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { apiUnsplash } from "../services/unsplash";
-import photoListSlice from "./slice/photoListSclice";
 
 const rootReducer = combineReducers({
-  photoList: photoListSlice,
   [apiUnsplash.reducerPath]: apiUnsplash.reducer,
 });
 

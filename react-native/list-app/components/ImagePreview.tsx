@@ -17,7 +17,7 @@ export default function ImagePreview({ idx, uri = 'None' }: TProps) {
         borderWidth: 2,
         borderColor: "white",
         resizeMode: "contain",
-        margin: 8,
+        marginBottom: 12,
       }}
     />
   );

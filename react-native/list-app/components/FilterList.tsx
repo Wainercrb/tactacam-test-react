@@ -1,40 +1,44 @@
-import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import React from "react";
+import { View, StyleSheet, Text } from "react-native";
 import type { TFIlterArgs } from "../types";
 
 import OrientationSelector from "./OrientationSelector";
 import ColorSelector from "./ColorSelector";
 
 type TProps = {
-    setFilterArgs: React.Dispatch<React.SetStateAction<TFIlterArgs>>;
+  setFilterArgs: React.Dispatch<React.SetStateAction<TFIlterArgs>>;
 };
 
 export default function FilterPhotoList({ setFilterArgs }: TProps) {
-
   return (
-    <View style={styles.container}>
-      <OrientationSelector
-        onOrientationChange={(orientation) =>
-          setFilterArgs((prevState) => {
-            return { ...prevState, orientation };
-          })
-        }
-      />
-      <ColorSelector
-        onColorChange={(color: string) => {
-          setFilterArgs((prevState) => {
-            return { ...prevState, color };
-          });
-        }}
-      />
+    <View>
+      <Text>FILTER BY COLOR:</Text>
+      <View style={styles.container}>
+        {/* <OrientationSelector
+          onOrientationChange={(orientation) =>
+            setFilterArgs((prevState) => {
+              return { ...prevState, orientation, page: 1 };
+            })
+          }
+        /> */}
+        <ColorSelector
+          onColorChange={(color: string) => {
+            setFilterArgs((prevState) => {
+              return { ...prevState, color, page: 1 };
+            });
+          }}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    height: "auto",
+    alignItems: "center",
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
 });

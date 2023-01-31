@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   TouchableOpacity,
@@ -35,7 +35,10 @@ const OrientationSelector: React.FC<TProps> = ({ onColorChange }) => {
         />
       </TouchableOpacity>
       <Modal visible={isVisible} transparent={true}>
-        <Button onPress={handleClose} title="close  " color="#841584" />
+        <View style={styles.closeBtn}>
+        <Button  onPress={handleClose} title="close" color="#841584" />
+
+        </View>
         <View style={styles.modalContainer}>
           <WheelPicker onColorChange={setSelectedColor} />
         </View>
@@ -47,7 +50,6 @@ const OrientationSelector: React.FC<TProps> = ({ onColorChange }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 12,
-    width: 130,
   },
   colorPreview: {
     width: 40,
@@ -60,6 +62,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
+  closeBtn: {
+    position: 'absolute',
+    zIndex: 5,
+    top: 12,
+    right: 12,
+    width: 120,
+  }
 });
 
 export default OrientationSelector;

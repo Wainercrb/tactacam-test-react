@@ -91,4 +91,5 @@ export interface Social {
 export type TFIlterArgs = {
   color: string;
   orientation: string;
+  page: number
 };

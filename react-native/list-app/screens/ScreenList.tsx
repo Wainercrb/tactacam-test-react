@@ -5,41 +5,39 @@ import {
   Text,
   View,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { GetColorName } from 'hex-color-to-color-name';
+import { useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
-import { fetchPhotos } from "../store/slice/photoListSclice";
+import type { TFIlterArgs } from "../types";
 
 import ImagePreview from "../components/ImagePreview";
 import FilterPhotoList from "../components/FilterList";
-import type { TFIlterArgs } from "../types";
+import { useGetPhotosQuery } from "../services/unsplash";
 
+// TODO: Move this data into the contants filter
 const FILTER_INITIAL_STATE: TFIlterArgs = {
-    color: '#d98c40',
-    orientation: ''
-}
+  color: "#d98c40",
+  orientation: "",
+  page: 1
+};
 
 export default function ScreenList() {
-  const dispatch = useDispatch();
+  const flatList = useRef<FlatList>(null);
   const navigation = useNavigation();
-  const screenState = useSelector((state: RootState) => state.photoList);
-  const [filterArgs, setFilterArgs] = useState<TFIlterArgs>(FILTER_INITIAL_STATE);
+  const [filterArgs, setFilterArgs] = useState(FILTER_INITIAL_STATE);
+  const { data, isFetching, error } = useGetPhotosQuery({
+    ...filterArgs,
+    color: GetColorName(filterArgs.color)
+  });
 
   useEffect(() => {
-    dispatch(fetchPhotos({ page: 1, ...filterArgs }));
+      if (flatList && flatList.current && filterArgs.page <= 1) {
+        flatList.current.scrollToOffset({ animated: true, offset: 0 });
+      }
   }, [filterArgs]);
 
-  const handleOnEndReached = () => {
-    if (!screenState.loading) {
-      dispatch(fetchPhotos({ page: screenState.nextPage }));
-    }
-  };
-
   const goToPreviewScreen = (photoID: string) => {
-    // alert();
-    console.log("asdfasdfasfasdfasf");
-    navigation.navigate("Preview", { photoID: photoID });
+    navigation.navigate("Preview" as never, { photoID: photoID } as never);
   };
 
   return (
@@ -49,7 +47,8 @@ export default function ScreenList() {
       </View>
       <View style={styles.list}>
         <FlatList
-          data={screenState.photos}
+          ref={flatList}
+          data={data}
           keyExtractor={(_, index) => {
             return index.toString();
           }}
@@ -62,11 +61,17 @@ export default function ScreenList() {
               </View>
             </TouchableWithoutFeedback>
           )}
-          onEndReached={handleOnEndReached}
+          onEndReached={() => {
+            setFilterArgs((prevState) => ({
+              ...prevState,
+              page: prevState.page + 1,
+            }));
+          }}
         />
       </View>
       <View style={styles.loading}>
-        {screenState.loading && <Text>Loading...</Text>}
+        {isFetching && <Text>Loading...</Text>}
+        {!isFetching && error && <Text>{JSON.stringify(error)}</Text>}
       </View>
     </View>
   );
@@ -75,9 +80,10 @@ export default function ScreenList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 12
   },
   filter: {
-    height: 60,
+    height: 120,
   },
   list: {
     flex: 1,

@@ -5,6 +5,7 @@ import { TUnsplashPhoto } from "../types";
 import * as Permissions from "expo-permissions";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from "expo-media-library";
 import type { TRootStackParamList } from "../App";
 
 import ImagePreview from "../components/ImagePreview";
@@ -23,34 +24,39 @@ export default function ScreenListPreview({ route }: Props) {
     return urls.full ?? urls.thumb;
   };
 
-  const downloadImage = async (
+  const handleDownload = async (
     image: TUnsplashPhoto | undefined
   ): Promise<void> => {
-    if (!image) {
-      alert("Image not found!");
-      return;
-    }
-    setIsLoading(true);
-    await handleDownload(getImageUrl(image));
-  };
-
-  const handleDownload = async (url: string): Promise<void> => {
     try {
-      // Retrieve the image data
-      const response = await fetch(url);
-      const binaryData = await response.arrayBuffer();
+      if (!image) {
+        alert("Image not found!");
+        return;
+      }
 
-      // Save the image to the device's file system
-      const imageName = url.substring(url.lastIndexOf("/") + 1);
-      const imagePath = FileSystem.documentDirectory + imageName;
-      await FileSystem.writeAsByteArray(imagePath, new Uint8Array(binaryData));
+      setIsLoading(true);
+      const imageUri = getImageUrl(image);
+      const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
 
-      // Open the saved image in the device's photo gallery
-      await FileSystem.openBrowserAsync(imagePath);
+      if (status !== "granted") {
+        alert("Failed to get media library permission");
+        return;
+      }
+
+      const fileName = `${Date.now()}.jpg`;
+      const fileUri = FileSystem.documentDirectory + fileName;
+      const { uri } = await FileSystem.downloadAsync(imageUri, fileUri);
+
+      await MediaLibrary.createAssetAsync(uri);
+      await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
     } catch (error) {
-      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   if (isFetching) {
@@ -66,24 +72,39 @@ export default function ScreenListPreview({ route }: Props) {
       {data && (
         <View>
           <ImagePreview uri={getImageUrl(data)} idx={"None"} />
-          <Text>Description: {data.description || "---"}</Text>
-          <Text>Likes: {data.likes || "No Description :("}</Text>
+          <Text style={styles.titleText}>
+            Description: {data.description || "---"}
+          </Text>
+          <Text style={styles.descriptionText}>
+            Likes: {data.likes || "No Description :("}
+          </Text>
         </View>
       )}
 
-      <Button
-        onPress={() => downloadImage(data)}
-        title="Download"
-        color="#841584"
-        disabled={isLoading}
-        accessibilityLabel="Learn more about this purple button"
-      />
+      <View style={styles.downloadBtn}>
+        <Button
+          onPress={() => handleDownload(data)}
+          title="Download"
+          color="#841584"
+          disabled={isLoading}
+          accessibilityLabel="Learn more about this purple button"
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 3,
+    padding: 12,
+  },
+  downloadBtn: {
+    marginTop: 24,
+  },
+  titleText: {
+    fontSize: 16,
+  },
+  descriptionText: {
+    fontSize: 16,
   },
 });
