@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import * as unsplashClient from '../../clients/unsplashClient'
-import { TUnsplashPhoto } from '../../types';
+import { TFIlterArgs, TUnsplashPhoto } from '../../types';
 
 export type UserListState = {
   photos: TUnsplashPhoto[];
@@ -16,10 +16,10 @@ const initialState: UserListState = {
   nextPage: 1,
 };
 
-export const fetchPhotos = createAsyncThunk<{photos: TUnsplashPhoto[]}, {page: number}>(
+export const fetchPhotos = createAsyncThunk<{photos: TUnsplashPhoto[]}, {page: number} & TFIlterArgs>(
   'fetchUsers',
-  async ({page}) => {
-    const response = await unsplashClient.fetchPhothosByPage(page, 10);
+  async ({page, color, orientation}) => {
+    const response = await unsplashClient.fetchPhothosByPage(page, color, orientation);
     if (response.kind === 'success') {
       return {
         photos: response.body ?? [],

@@ -6,12 +6,15 @@ type NetworkResponse<T> = {
   body?: T;
 };
 
+const BASE_URL = 'https://api.unsplash.com';
+
 export const fetchPhothosByPage = async (
   page: number,
-  count: number
+  color: string,
+  orientation: string 
 ): Promise<NetworkResponse<TUnsplashPhoto[]>> => {
   const response = await fetch(
-    `https://api.unsplash.com/search/photos?page=${page}=1&query=office&client_id=fn-pVLasIokTQN9i-QrPuH9FeftGgSdo76B4ybimcdQ`,
+    `${BASE_URL}/search/photos?page=${page}=1&query=${color}&client_id=fn-pVLasIokTQN9i-QrPuH9FeftGgSdo76B4ybimcdQ`,
     {
       method: "GET",
       headers: {

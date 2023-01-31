@@ -87,3 +87,8 @@ export interface Social {
   portfolio_url: string;
   twitter_username: null;
 }
+
+export type TFIlterArgs = {
+  color: string;
+  orientation: string;
+};
