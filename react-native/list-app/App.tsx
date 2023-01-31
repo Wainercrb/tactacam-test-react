@@ -1,5 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Provider as ReduxProvider } from "react-redux";
+import store from "./store";
 
 import ScreenList from "./screens/ScreenList";
 import ScreenListPreview from "./screens/ScreenListPreview";
@@ -8,10 +10,20 @@ export default function App() {
   const Stack = createNativeStackNavigator();
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="List" component={ScreenList} />
-        <Stack.Screen name="Preview" component={ScreenListPreview} />
-      </Stack.Navigator>
+      <ReduxProvider store={store}>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="List"
+            options={{ title: "Home List" }}
+            component={ScreenList}
+          />
+          <Stack.Screen
+            name="Preview"
+            options={{ title: "Image Preview" }}
+            component={ScreenListPreview}
+          />
+        </Stack.Navigator>
+      </ReduxProvider>
     </NavigationContainer>
   );
 }
