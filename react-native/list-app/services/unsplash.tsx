@@ -21,6 +21,7 @@ export const apiUnsplash = createApi({
         params: {
           page: page.page,
           query: page.color,
+          orientation: page.orientation,
           per_page: 10,
           client_id: UNSPLSH_CLIENT_ID,
         },

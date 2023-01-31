@@ -5,14 +5,16 @@ type TProps = {
   uri?: string;
 };
 
-export default function ImagePreview({ idx, uri = 'None' }: TProps) {
+export default function ImagePreview({
+  idx,
+  uri = "None",
+}: TProps): React.ReactElement {
   return (
     <Image
-      onProgress={() => {console.log('uno dos')}}
       key={idx}
       source={{ uri }}
       style={{
-        width: 'auto',
+        width: "auto",
         height: 400,
         borderWidth: 2,
         borderColor: "white",
