@@ -1,69 +1,74 @@
-import {
-  StyleSheet,
-  FlatList,
-  TouchableWithoutFeedback,
-  Text,
-  View,
-} from "react-native";
-import { GetColorName } from 'hex-color-to-color-name';
-import { useEffect, useRef, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
 
-import ImagePreview from "../components/ImagePreview";
-import FilterPhotoList from "../components/FilterList";
 import { useGetPhotosQuery } from "../services/unsplash";
-import FilterListDefaultArgs from "../constants/FilterList";
+import ImageList from "../components/ImageList";
+import CustomSelect from "../components/CustomSelect";
 
+const ORIENTATION_STATE_LIST = [
+  { value: "landscape", label: "Landscape" },
+  { value: "portrait", label: "Portrait" },
+  { value: "squarish", label: "Squarish" },
+];
+
+const COLOR_STATE_LIST = [
+  { value: "black_and_white", label: "Black And White" },
+  { value: "black", label: "Black" },
+  { value: "white", label: "White" },
+  { value: "yellow", label: "Yellow" },
+  { value: "orange", label: "Orange" },
+  { value: "red", label: "Red" },
+  { value: "purple", label: "Purple" },
+  { value: "magenta", label: "Magenta" },
+  { value: "green", label: "Green" },
+  { value: "teal", label: "Teal" },
+  { value: "blue", label: "Blue" },
+];
+
+const FILTER_INITIAL_STATE = {
+  color: COLOR_STATE_LIST[0].value,
+  orientation: ORIENTATION_STATE_LIST[0].value,
+  page: 1,
+};
 
 export default function ScreenList() {
-  const flatList = useRef<FlatList>(null);
-  const navigation = useNavigation();
-  const [filterArgs, setFilterArgs] = useState(FilterListDefaultArgs);
-  const { data, isFetching, error } = useGetPhotosQuery({
-    ...filterArgs,
-    color: GetColorName(filterArgs.color)
-  });
-
-  useEffect(() => {
-      if (flatList && flatList.current && filterArgs.page <= 1) {
-        flatList.current.scrollToOffset({ animated: true, offset: 0 });
-      }
-  }, [filterArgs]);
-
-  const goToPreviewScreen = (photoID: string) => {
-    navigation.navigate("Preview" as never, { photoID: photoID } as never);
-  };
+  const [filterArgs, setFilterArgs] = useState(FILTER_INITIAL_STATE);
+  const { data, isFetching, error } = useGetPhotosQuery(filterArgs);
 
   return (
     <View style={styles.container}>
-      <View style={styles.filter}>
-        <FilterPhotoList setFilterArgs={setFilterArgs} />
-      </View>
-      <View style={styles.list}>
-        <FlatList
-          ref={flatList}
-          data={data}
-          keyExtractor={(_, index) => {
-            return index.toString();
+      <View style={styles.filterContainer}>
+        <CustomSelect
+          label="Orientation:"
+          data={ORIENTATION_STATE_LIST}
+          handleChange={(value) => {
+            setFilterArgs((prevState) => {
+              return { ...prevState, orientation: value, page: 1 };
+            });
           }}
-          renderItem={({ item, index }) => (
-            <TouchableWithoutFeedback
-              onPress={() => goToPreviewScreen(item.id)}
-            >
-              <View>
-                <ImagePreview uri={item.urls.thumb} idx={index.toString()} />
-              </View>
-            </TouchableWithoutFeedback>
-          )}
-          onEndReached={() => {
-            setFilterArgs((prevState) => ({
-              ...prevState,
-              page: prevState.page + 1,
-            }));
+        />
+
+        <CustomSelect
+          label="Color:"
+          data={COLOR_STATE_LIST}
+          handleChange={(value) => {
+            setFilterArgs((prevState) => {
+              return { ...prevState, color: value, page: 1 };
+            });
           }}
         />
       </View>
-      <View style={styles.loading}>
+      <ImageList
+        page={filterArgs.page}
+        photos={data ?? []}
+        handleNextPage={() => {
+          setFilterArgs((prevState) => ({
+            ...prevState,
+            page: prevState.page + 1,
+          }));
+        }}
+      />
+      <View style={styles.loadingContainer}>
         {isFetching && <Text>Loading...</Text>}
         {!isFetching && error && <Text>{JSON.stringify(error)}</Text>}
       </View>
@@ -74,15 +79,14 @@ export default function ScreenList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 12
+    padding: 12,
   },
-  filter: {
-    height: 120,
+  filterContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
-  list: {
-    flex: 1,
-  },
-  loading: {
+  loadingContainer: {
     height: 40,
     alignItems: "center",
     justifyContent: "center",

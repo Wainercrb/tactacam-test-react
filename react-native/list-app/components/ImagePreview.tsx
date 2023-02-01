@@ -1,13 +1,13 @@
 import { Image } from "react-native";
 
 type TProps = {
-  idx: string;
-  uri?: string;
+  idx?: string;
+  uri: string;
 };
 
 export default function ImagePreview({
-  idx,
-  uri = "None",
+  idx = "",
+  uri,
 }: TProps): React.ReactElement {
   return (
     <Image

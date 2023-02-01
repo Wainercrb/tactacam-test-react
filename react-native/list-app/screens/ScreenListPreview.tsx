@@ -1,7 +1,7 @@
 import { View, Text, Button, StyleSheet } from "react-native";
 import { useGetPhotoByIdQuery } from "../services/unsplash";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { TUnsplashPhoto } from "../types";
+import { IUnsplashPhoto } from "../types";
 import * as Permissions from "expo-permissions";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
@@ -16,16 +16,16 @@ interface Props
 
 export default function ScreenListPreview({ route }: Props) {
   const { photoID } = route.params;
-  const { data, isFetching } = useGetPhotoByIdQuery(photoID);
+  const { data, isFetching } = useGetPhotoByIdQuery(photoID); // We also can pass this data using the props, but for this example i am using redux-toolkit
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const getImageUrl = (image: TUnsplashPhoto): string => {
+  const getImageUrl = (image: IUnsplashPhoto): string => {
     const { urls } = image;
     return urls.full ?? urls.thumb;
   };
 
   const handleDownload = async (
-    image: TUnsplashPhoto | undefined
+    image: IUnsplashPhoto | undefined
   ): Promise<void> => {
     try {
       if (!image) {

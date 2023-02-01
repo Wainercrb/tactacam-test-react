@@ -1,4 +1,4 @@
-export interface TUnsplashPhoto {
+export interface IUnsplashPhoto {
   alt_description: string;
   blur_hash: string;
   color: string;
