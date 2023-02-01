@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { TFIlterArgs, TUnsplashPhoto } from "./../types";
+import { TFIlterArgs, IUnsplashPhoto } from "./../types";
 
 const BASE_API_URL = "https://api.unsplash.com"; // TODO: Move the variable to the env file
 const UNSPLSH_CLIENT_ID = "fn-pVLasIokTQN9i-QrPuH9FeftGgSdo76B4ybimcdQ"; // TODO: Move the variable to the env file
@@ -14,20 +14,21 @@ const baseQuery = fetchBaseQuery({
 export const apiUnsplash = createApi({
   baseQuery: baseQuery,
   endpoints: (builder) => ({
-    getPhotos: builder.query<TUnsplashPhoto[], { page: number } & TFIlterArgs>({
+    getPhotos: builder.query<IUnsplashPhoto[], { page: number } & TFIlterArgs>({
       query: (page) => ({
         url: `/search/photos`,
         method: "get",
         params: {
           page: page.page,
-          query: page.color,
+          query: 'random',
+          color: page.color,
           orientation: page.orientation,
           per_page: 10,
           client_id: UNSPLSH_CLIENT_ID,
         },
       }),
       transformResponse: (response: any) => {
-        return response?.results as TUnsplashPhoto[];
+        return response?.results as IUnsplashPhoto[];
       },
       serializeQueryArgs: ({ queryArgs, endpointName }) => {
         return endpointName;
@@ -46,7 +47,7 @@ export const apiUnsplash = createApi({
         return true;
       },
     }),
-    getPhotoById: builder.query<TUnsplashPhoto, string>({
+    getPhotoById: builder.query<IUnsplashPhoto, string>({
       query: (id) => ({
         url: `/photos/${id}`,
         params: {
